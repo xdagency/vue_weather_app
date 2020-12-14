@@ -1,5 +1,7 @@
 <template>
 
+  <!-- DEV -->
+
   <article :class="'main ' + weather.weather[0].main">
 
     <h1 class="brand">{{ copy_en.TITLE_MAIN }} <br> <span class="light">{{ copy_jp.TITLE_MAIN }}</span></h1>
