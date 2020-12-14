@@ -60,11 +60,11 @@
               description: 'Cannot get weather',
               icon: '01d',
               id: 0,
-              main: 'Weather error'
+              main: 'Weather'
             }
           ]
         },
-        location: 'vancouver'
+        location: 'tokyo'
       }
     },
 
@@ -101,6 +101,9 @@
     },
 
     mounted() {
+
+      console.log(process.env.APP_SECRET);
+
       axios.all([
           // copydeck api
           axios.get(`${process.env.COPYDECK_URL}`, { headers: { 'Authorization': 'Bearer ' +  process.env.COPYDECK_API_KEY }}),
