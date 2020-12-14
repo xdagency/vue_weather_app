@@ -1,16 +1,26 @@
 <template>
 
-  <main :class="'main ' + weather.weather[0].main">
+  <article :class="'main ' + weather.weather[0].main">
 
-    <h1>{{ copy.TITLE_MAIN }}</h1>
+    <h1 class="brand">{{ copy_en.TITLE_MAIN }} <br> <span class="light">{{ copy_jp.TITLE_MAIN }}</span></h1>
 
     <!-- LOADER -->
     <Loader v-bind:class="loader" />
 
-    <!-- DASHBOARD -->
-    <Dashboard v-bind:copy="copy" v-bind:weather="weather" />
+    <!-- ERROR -->
+    <Error v-bind:class="error" v-bind:copy_en="copy_en" v-bind:copy_jp="copy_jp" />
 
-  </main>
+    <!-- SEARCH -->
+    <Search v-bind:copy_en="copy_en" v-bind:copy_jp="copy_jp" v-bind:location="location" @new-location="getLocation" />
+
+    <article class="content">
+
+      <!-- DASHBOARD -->
+      <Dashboard v-bind:copy_en="copy_en" v-bind:copy_jp="copy_jp" v-bind:weather="weather" />
+
+    </article>
+
+  </article>
 
 </template>
 
@@ -20,6 +30,8 @@
   import config from './config'
   import Loader from './components/Loader.vue'
   import Dashboard from './components/Dashboard.vue'
+  import Search from './components/Search.vue'
+  import Error from './components/Error.vue'
 
   export default {
     name: 'App',
@@ -27,18 +39,63 @@
     data() {
       return {
         loader: 'show',
-        copy: {},
-        weather: {},
-        initialLocation: 'Toronto'
+        error: 'hide',
+        copy_en: {},
+        copy_jp: {},
+        weather: {
+          clouds: {
+            all: 0
+          },
+          main: {
+            feels_like: 0,
+            humidity: 0,
+            temp: 0,
+            temp_max: 0,
+            temp_min: 0,
+          },
+          weather: [
+            {
+              description: 'Cannot get weather',
+              icon: '01d',
+              id: 0,
+              main: 'Weather error'
+            }
+          ]
+        },
+        location: 'vancouver'
       }
     },
 
     components: {
       Loader,
-      Dashboard
+      Dashboard,
+      Search,
+      Error
     },
 
     methods: {
+      getLocation(location) {
+
+        this.loader = 'show';
+
+        axios.get(`${config.WEATHER_API_URL}/?q=${location}&appid=${config.WEATHER_API_KEY}&units=metric`)
+            .then(results => {
+              // overwrite weather object with new data
+              this.weather = results.data;
+              return 'hide'
+            })
+            .then(result => {
+              this.loader = result;
+              this.error = result;
+            })
+            .catch(error => {
+              // error
+              console.log('ERROR:', error);
+              this.loader = 'hide';
+              this.error = 'show';
+              this.weather.weather[0].main = "Thunderstorm";
+            });
+      }
     },
 
     mounted() {
@@ -46,7 +103,7 @@
           // copydeck api
           axios.get(`${config.COPYDECK_URL}`, { headers: { 'Authorization': 'Bearer ' +  config.COPYDECK_API_KEY }}),
           // weather api
-          axios.get(`${config.WEATHER_API_URL}/?q=${this.initialLocation}&appid=${config.WEATHER_API_KEY}&units=metric`)
+          axios.get(`${config.WEATHER_API_URL}/?q=${this.location}&appid=${config.WEATHER_API_KEY}&units=metric`)
         ])
         .then(results => {
 
@@ -54,13 +111,19 @@
           let copyArray = results[0].data.records;
 
           // compress what we get back from airtable into simple arrays of KEYS and VALUES
-          let compressedCopyArray = copyArray.map(elem => {
+          let copyDeckEN = copyArray.map(elem => {
             return [elem.fields.Key, elem.fields.EN];
+            // return this.copy[elem.fields.Key] = elem.fields.EN;
+          });
+          // Japanese
+          let copyDeckJP = copyArray.map(elem => {
+            return [elem.fields.Key, elem.fields.JP];
             // return this.copy[elem.fields.Key] = elem.fields.EN;
           });
 
           // turn the compressed copy array into an object and save to data function
-          this.copy = Object.fromEntries(compressedCopyArray);
+          this.copy_en = Object.fromEntries(copyDeckEN);
+          this.copy_jp = Object.fromEntries(copyDeckJP);
 
           // save the weather info into the data weather array
           this.weather = results[1].data;
@@ -71,12 +134,17 @@
         .then(result => {
 
           this.loader = result;
+          this.error = result;
 
         })
         .catch(error => {
 
           // error
           console.log('ERROR:', error);
+
+          this.loader = 'hide';
+          this.error = 'show';
+          this.weather.weather[0].main = "Thunderstorm";
 
         });
     }
@@ -85,52 +153,121 @@
 
 </script>
 
-<style>
+<style lang="scss">
+
+  #app {
+    font-family: 'Noto Sans SC', Helvetica, Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-align: left;
+  }
 
   body, h1, h2, h3, h4, h5, p {
     padding: 0;
     margin: 0;
+    font-weight: 300;
   }
 
   h1, h2, h3 {
     text-transform: capitalize;
   }
 
-  #app {
-    font-family: 'Noto Sans SC', Helvetica, Arial, sans-serif;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-    text-align: center;
+  h3 {
+    font-size: 24px;
   }
 
-  main.main {
+  p {
+    font-size: 19px;
+  }
+
+  .light {
+    opacity: 0.5;
+  }
+
+  h1.brand {
+    position: fixed;
+    right: 40px;
+    top: 40px;
+    z-index: 10;
+    font-size: 16px;
+    text-align: right;
+  }
+
+  p + p {
+    padding-top: 8px;
+  }
+
+  article.main {
     height: 100%;
     height: 100vh;
+    padding: 0;
     position: relative;
   }
 
-  .Thunderstorm, .Rain, .Tornado {
-    background-color: #122C34;
+  article.content {
+    padding: 0 24px 40px;
+    // max-width: 1280px;
+    margin: 0 auto;
+
+    @media screen and (min-width: 720px) {
+      padding: 0 96px 40px;
+    }
+    @media screen and (min-width: 1280px) {
+      padding: 0 196px 40px;
+    }
+    @media screen and (min-width: 1600px) {
+      padding: 0 248px 40px;
+    }
+  }
+
+  .Thunderstorm, .Rain, .Tornado, .Squall { background-color: #122C34; }
+  .Drizzle, .Mist, .Clouds { background-color: #94A8B3; }
+  .Haze, .Fog, .Snow { background-color: #CFD2CD; }
+  .Sand, .Ash { background-color: #646881; }
+  .Clear { background-color: #8CD9E3; }
+
+
+  .Thunderstorm, .Rain, .Tornado, .Sand, .Ash {
     color: #F0F0F0;
+    input.search { 
+      color: #F0F0F0; 
+    }
+    ::placeholder {
+      color: #F0F0F0;
+      opacity: 1;
+    }
+    :-ms-input-placeholder { /* Internet Explorer 10-11 */
+      color: #F0F0F0;
+    }
+    ::-ms-input-placeholder { /* Microsoft Edge */
+      color: #F0F0F0;
+    }
+    .data {
+      border-top: 1px solid rgba(255,255,255,0.25);
+    }
   }
 
-  .Drizzle, .Mist, .Clouds, .Squall {
-    background-color: #A9BAC6;
+  .Drizzle, .Mist, .Clouds, .Squall, .Haze, .Fog, .Snow, .Clear {
     color: #101010;
-  }
-
-  .Haze, .Fog, .Sand, .Ash, .Snow {
-    background-color: #CFD2CD;
-    color: #101010;
-  }
-
-  .Clear {
-    background-color: #4EA5D9;
-    color: #101010;
+    input.search { 
+      color: #101010; 
+    }
+    ::placeholder {
+      color: #101010;
+      opacity: 1;
+    }
+    :-ms-input-placeholder { /* Internet Explorer 10-11 */
+      color: #101010;
+    }
+    ::-ms-input-placeholder { /* Microsoft Edge */
+      color: #101010;
+    }
+    .data {
+      border-top: 1px solid rgba(0,0,0,0.25);
+    }
   }
 
   /*
-
   Thunderstorm
   Drizzle
   Rain
@@ -146,7 +283,6 @@
   Tornado
   Clear
   Clouds
-
   */
 
 </style>

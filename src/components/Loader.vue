@@ -11,19 +11,14 @@
 <script>
 export default {
   name: 'Loader',
-  props: {
-      loader: {
-        type: String,
-        required: true
-      }
-  }
+  props: ['loader']
 }
 </script>
 
 <style scoped>
 
     article.loader {
-        background: #111111;
+        background: #251627;
         width: 100%;
         width: 100vw;
         height: 100%;
@@ -38,7 +33,10 @@ export default {
 
     .lds-roller {
         display: inline-block;
-        position: relative;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
         width: 80px;
         height: 80px;
         }
