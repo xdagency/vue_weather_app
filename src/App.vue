@@ -104,7 +104,7 @@
 
     mounted() {
 
-      console.log(process.env.APP_SECRET);
+      console.log('enviroment:', process.env.NODE_ENV, 'Secret:', process.env.APP_SECRET);
 
       axios.all([
           // copydeck api
