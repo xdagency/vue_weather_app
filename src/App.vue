@@ -40,6 +40,8 @@
 
     data() {
       return {
+        weather_api_url: process.env.WEATHER_API_URL || 'https://api.openweathermap.org/data/2.5/weather',
+        copydeck_url: process.env.COPYDECK_URL || 'https://api.airtable.com/v0/appVBDOC5NsrAQfd5/Copydeck',
         loader: 'show',
         error: 'hide',
         copy_en: {},
@@ -80,7 +82,7 @@
 
         this.loader = 'show';
 
-        axios.get(`${process.env.WEATHER_API_URL}/?q=${location}&appid=${process.env.WEATHER_API_KEY}&units=metric`)
+        axios.get(`${this.weather_api_url}/?q=${location}&appid=${process.env.WEATHER_API_KEY}&units=metric`)
             .then(results => {
               // overwrite weather object with new data
               this.weather = results.data;
@@ -106,9 +108,9 @@
 
       axios.all([
           // copydeck api
-          axios.get(`${process.env.COPYDECK_URL}`, { headers: { 'Authorization': 'Bearer ' +  process.env.COPYDECK_API_KEY }}),
+          axios.get(`${this.copydeck_url}`, { headers: { 'Authorization': 'Bearer ' +  process.env.COPYDECK_API_KEY }}),
           // weather api
-          axios.get(`${process.env.WEATHER_API_URL}/?q=${this.location}&appid=${process.env.WEATHER_API_KEY}&units=metric`)
+          axios.get(`${this.weather_api_url}/?q=${this.location}&appid=${process.env.WEATHER_API_KEY}&units=metric`)
         ])
         .then(results => {
 
