@@ -29,7 +29,7 @@
 <script>
 
   import axios from 'axios'
-  import config from './config'
+  // import config from './config'
   import Loader from './components/Loader.vue'
   import Dashboard from './components/Dashboard.vue'
   import Search from './components/Search.vue'
@@ -80,7 +80,7 @@
 
         this.loader = 'show';
 
-        axios.get(`${config.WEATHER_API_URL || process.env.WEATHER_API_URL}/?q=${location}&appid=${config.WEATHER_API_KEY || process.env.WEATHER_API_KEY}&units=metric`)
+        axios.get(`${process.env.WEATHER_API_URL}/?q=${location}&appid=${process.env.WEATHER_API_KEY}&units=metric`)
             .then(results => {
               // overwrite weather object with new data
               this.weather = results.data;
@@ -103,9 +103,9 @@
     mounted() {
       axios.all([
           // copydeck api
-          axios.get(`${config.COPYDECK_URL || process.env.COPYDECK_URL}`, { headers: { 'Authorization': 'Bearer ' +  config.COPYDECK_API_KEY || process.env.COPYDECK_API_KEY }}),
+          axios.get(`${process.env.COPYDECK_URL}`, { headers: { 'Authorization': 'Bearer ' +  process.env.COPYDECK_API_KEY }}),
           // weather api
-          axios.get(`${config.WEATHER_API_URL || process.env.WEATHER_API_URL}/?q=${this.location}&appid=${config.WEATHER_API_KEY || process.env.WEATHER_API_KEY}&units=metric`)
+          axios.get(`${process.env.WEATHER_API_URL}/?q=${this.location}&appid=${process.env.WEATHER_API_KEY}&units=metric`)
         ])
         .then(results => {
 
