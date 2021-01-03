@@ -1,10 +1,9 @@
 import axios from 'axios';
-// import config from '../src/config.js';
 
 exports.handler = function(event, context, callback) {
 
-    axios.get(`${process.env.COPYDECK_URL}`, { headers: { 'Authorization': 'Bearer ' + process.env.COPYDECK_API_KEY }})
-    // axios.get(`${config.COPYDECK_URL}`, { headers: { 'Authorization': 'Bearer ' + config.COPYDECK_API_KEY }})
+    // axios.get(`${process.env.COPYDECK_URL}`, { headers: { 'Authorization': 'Bearer ' + process.env.COPYDECK_API_KEY }})
+    axios.get(`${process.env.VUE_APP_COPYDECK_URL}`, { headers: { 'Authorization': 'Bearer ' + process.env.VUE_APP_COPYDECK_API_KEY }})
 
         .then(result => {
 

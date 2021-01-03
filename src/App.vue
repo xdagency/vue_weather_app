@@ -29,7 +29,6 @@
 <script>
 
   import axios from 'axios'
-  // import config from './config'
   import Loader from './components/Loader.vue'
   import Dashboard from './components/Dashboard.vue'
   import Search from './components/Search.vue'
@@ -80,7 +79,7 @@
 
         this.loader = 'show';
 
-        axios.get(`https://tenki.netlify.app/.netlify/functions/weatherapi`, { "location": location })
+        axios.get(`${process.env.VUE_APP_WEATHER_LAMBDA_URL}`, { body: { "location": location } })
             
             .then(results => {
               // overwrite weather object with new data
@@ -105,15 +104,13 @@
 
     mounted() {
 
-      // console.log('enviroment:', process.env.NODE_ENV, 'Secret:', process.env.APP_SECRET);
-
-      console.log('Start Location', this.location);
+      console.log('enviroment:', process.env.NODE_ENV, process.env.VUE_APP_APP_SECRET);
 
       axios.all([
           // copydeck
-          axios.get(`https://tenki.netlify.app/.netlify/functions/copydeckapi`),
+          axios.get(`${process.env.VUE_APP_COPYDECK_LAMBDA_URL}`),
           // weather
-          axios.get(`https://tenki.netlify.app/.netlify/functions/weatherapi`, { "location": "tokyo" })
+          axios.get(`${process.env.VUE_APP_WEATHER_LAMBDA_URL}`, { body: { "location": this.location } })
         ])
 
         .then(results => {
@@ -136,7 +133,7 @@
         .catch(error => {
 
           // error
-          console.log('ERROR:', error);
+          console.log('ERROR 1:', error);
           this.loader = 'hide';
           this.error = 'show';
           this.weather.weather[0].main = "Thunderstorm";
