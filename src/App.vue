@@ -107,11 +107,13 @@
 
       // console.log('enviroment:', process.env.NODE_ENV, 'Secret:', process.env.APP_SECRET);
 
+      console.log('Start Location', this.location);
+
       axios.all([
           // copydeck
           axios.get(`https://tenki.netlify.app/.netlify/functions/copydeckapi`),
           // weather
-          axios.get(`https://tenki.netlify.app/.netlify/functions/weatherapi`, { "location": this.location })
+          axios.get(`https://tenki.netlify.app/.netlify/functions/weatherapi`, { "location": "tokyo" })
         ])
 
         .then(results => {
