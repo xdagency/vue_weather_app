@@ -63,7 +63,8 @@
             }
           ]
         },
-        location: 'tokyo'
+        location: 'tokyo',
+        time: ''
       }
     },
 
@@ -79,7 +80,10 @@
 
         this.loader = 'show';
 
-        axios.get(`${process.env.VUE_APP_WEATHER_LAMBDA_URL}`, { body: { "location": location } })
+        axios.post(`${process.env.VUE_APP_WEATHER_LAMBDA_URL}`, {
+            location: location,
+            api_key: process.env.VUE_APP_WEATHER_API_KEY
+          })
             
             .then(results => {
               // overwrite weather object with new data
@@ -104,13 +108,19 @@
 
     mounted() {
 
-      console.log('enviroment:', process.env.NODE_ENV, process.env.VUE_APP_APP_SECRET);
+      // console.log('enviroment:', process.env.NODE_ENV, 'secret:', process.env.VUE_APP_SECRET);
 
       axios.all([
           // copydeck
-          axios.get(`${process.env.VUE_APP_COPYDECK_LAMBDA_URL}`),
+          axios.post(`${process.env.VUE_APP_COPYDECK_LAMBDA_URL}`, {
+              id: process.env.VUE_APP_COPYDECK_ID,
+              api_key: process.env.VUE_APP_COPYDECK_API_KEY
+          }),
           // weather
-          axios.get(`${process.env.VUE_APP_WEATHER_LAMBDA_URL}`, { body: { "location": this.location } })
+          axios.post(`${process.env.VUE_APP_WEATHER_LAMBDA_URL}`, { 
+              location: this.location,
+              api_key: process.env.VUE_APP_WEATHER_API_KEY
+          })
         ])
 
         .then(results => {
@@ -125,6 +135,7 @@
 
         .then(result => {
 
+          // hide loader and error states
           this.loader = result;
           this.error = result;
 

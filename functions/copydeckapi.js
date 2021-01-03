@@ -2,8 +2,10 @@ import axios from 'axios';
 
 exports.handler = function(event, context, callback) {
 
+    const parsedBody = JSON.parse(event.body);
+
     // axios.get(`${process.env.COPYDECK_URL}`, { headers: { 'Authorization': 'Bearer ' + process.env.COPYDECK_API_KEY }})
-    axios.get(`${process.env.VUE_APP_COPYDECK_URL}`, { headers: { 'Authorization': 'Bearer ' + process.env.VUE_APP_COPYDECK_API_KEY }})
+    axios.get(`https://api.airtable.com/v0/${parsedBody.id}`, { headers: { 'Authorization': 'Bearer ' + parsedBody.api_key }})
 
         .then(result => {
 
