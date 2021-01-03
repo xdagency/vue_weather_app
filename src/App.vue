@@ -104,52 +104,36 @@
 
     mounted() {
 
-      console.log('enviroment:', process.env.NODE_ENV, 'Secret:', process.env.APP_SECRET);
+      // console.log('enviroment:', process.env.NODE_ENV, 'Secret:', process.env.APP_SECRET);
 
       axios.all([
-          // copydeck api
-          axios.get(`${this.copydeck_url}`, { headers: { 'Authorization': 'Bearer ' +  process.env.COPYDECK_API_KEY }}),
-          // weather api
-          axios.get(`${this.weather_api_url}/?q=${this.location}&appid=${process.env.WEATHER_API_KEY}&units=metric`)
+          // copydeck
+          axios.get(`https://tenki.netlify.app/.netlify/functions/copydeckapi`),
+          // weather
+          axios.get(`https://tenki.netlify.app/.netlify/functions/weatherapi`, { location: this.location })
         ])
+
         .then(results => {
 
-          // set the results from airtable into copy array
-          let copyArray = results[0].data.records;
-
-          // compress what we get back from airtable into simple arrays of KEYS and VALUES
-          // English
-          let copyDeckEN = copyArray.map(elem => {
-            return [elem.fields.Key, elem.fields.EN];
-            // return this.copy[elem.fields.Key] = elem.fields.EN;
-          });
-          // Japanese
-          let copyDeckJP = copyArray.map(elem => {
-            return [elem.fields.Key, elem.fields.JP];
-            // return this.copy[elem.fields.Key] = elem.fields.EN;
-          });
-
-          // turn the compressed copy array into an object and save to data function
-          this.copy_en = Object.fromEntries(copyDeckEN);
-          this.copy_jp = Object.fromEntries(copyDeckJP);
-
-          // save the weather info into the data weather array
+          this.copy_en = results[0].data.EN;
+          this.copy_jp = results[0].data.JP;
           this.weather = results[1].data;
 
           return 'hide'
 
         })
+
         .then(result => {
 
           this.loader = result;
           this.error = result;
 
         })
+
         .catch(error => {
 
           // error
           console.log('ERROR:', error);
-
           this.loader = 'hide';
           this.error = 'show';
           this.weather.weather[0].main = "Thunderstorm";
