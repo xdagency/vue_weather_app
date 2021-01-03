@@ -104,8 +104,6 @@
 
     mounted() {
 
-      console.log('enviroment:', process.env.NODE_ENV, 'Secret:', process.env.APP_SECRET);
-
       axios.all([
           // copydeck api
           axios.get(`${this.copydeck_url}`, { headers: { 'Authorization': 'Bearer ' +  process.env.COPYDECK_API_KEY }}),
@@ -118,6 +116,7 @@
           let copyArray = results[0].data.records;
 
           // compress what we get back from airtable into simple arrays of KEYS and VALUES
+          // English
           let copyDeckEN = copyArray.map(elem => {
             return [elem.fields.Key, elem.fields.EN];
             // return this.copy[elem.fields.Key] = elem.fields.EN;
