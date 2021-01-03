@@ -40,8 +40,6 @@
 
     data() {
       return {
-        weather_api_url: process.env.WEATHER_API_URL || 'https://api.openweathermap.org/data/2.5/weather',
-        copydeck_url: process.env.COPYDECK_URL || 'https://api.airtable.com/v0/appVBDOC5NsrAQfd5/Copydeck',
         loader: 'show',
         error: 'hide',
         copy_en: {},
@@ -82,7 +80,7 @@
 
         this.loader = 'show';
 
-        axios.get(`https://tenki.netlify.app/.netlify/functions/weatherapi`, { location: location })
+        axios.get(`https://tenki.netlify.app/.netlify/functions/weatherapi`, { "location": location })
             
             .then(results => {
               // overwrite weather object with new data
@@ -113,7 +111,7 @@
           // copydeck
           axios.get(`https://tenki.netlify.app/.netlify/functions/copydeckapi`),
           // weather
-          axios.get(`https://tenki.netlify.app/.netlify/functions/weatherapi`, { location: this.location })
+          axios.get(`https://tenki.netlify.app/.netlify/functions/weatherapi`, { "location": this.location })
         ])
 
         .then(results => {
