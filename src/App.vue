@@ -1,6 +1,6 @@
 <template>
 
-  <!-- DEV -->
+  <!-- MASTER -->
 
   <article :class="'main ' + weather.weather[0].main">
 
@@ -29,7 +29,7 @@
 <script>
 
   import axios from 'axios'
-  import config from './config'
+  // import config from './config'
   import Loader from './components/Loader.vue'
   import Dashboard from './components/Dashboard.vue'
   import Search from './components/Search.vue'
@@ -40,6 +40,8 @@
 
     data() {
       return {
+        weather_api_url: process.env.WEATHER_API_URL || 'https://api.openweathermap.org/data/2.5/weather',
+        copydeck_url: process.env.COPYDECK_URL || 'https://api.airtable.com/v0/appVBDOC5NsrAQfd5/Copydeck',
         loader: 'show',
         error: 'hide',
         copy_en: {},
@@ -60,11 +62,11 @@
               description: 'Cannot get weather',
               icon: '01d',
               id: 0,
-              main: 'Weather error'
+              main: 'Weather'
             }
           ]
         },
-        location: 'vancouver'
+        location: 'tokyo'
       }
     },
 
@@ -80,7 +82,7 @@
 
         this.loader = 'show';
 
-        axios.get(`${config.WEATHER_API_URL}/?q=${location}&appid=${config.WEATHER_API_KEY}&units=metric`)
+        axios.get(`${this.weather_api_url}/?q=${location}&appid=${process.env.WEATHER_API_KEY}&units=metric`)
             .then(results => {
               // overwrite weather object with new data
               this.weather = results.data;
@@ -104,9 +106,9 @@
 
       axios.all([
           // copydeck api
-          axios.get(`${config.COPYDECK_URL}`, { headers: { 'Authorization': 'Bearer ' +  config.COPYDECK_API_KEY }}),
+          axios.get(`${this.copydeck_url}`, { headers: { 'Authorization': 'Bearer ' +  process.env.COPYDECK_API_KEY }}),
           // weather api
-          axios.get(`${config.WEATHER_API_URL}/?q=${this.location}&appid=${config.WEATHER_API_KEY}&units=metric`)
+          axios.get(`${this.weather_api_url}/?q=${this.location}&appid=${process.env.WEATHER_API_KEY}&units=metric`)
         ])
         .then(results => {
 
