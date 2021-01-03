@@ -118,6 +118,7 @@
           let copyArray = results[0].data.records;
 
           // compress what we get back from airtable into simple arrays of KEYS and VALUES
+          // English
           let copyDeckEN = copyArray.map(elem => {
             return [elem.fields.Key, elem.fields.EN];
             // return this.copy[elem.fields.Key] = elem.fields.EN;
