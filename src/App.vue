@@ -82,16 +82,19 @@
 
         this.loader = 'show';
 
-        axios.get(`${this.weather_api_url}/?q=${location}&appid=${process.env.WEATHER_API_KEY}&units=metric`)
+        axios.get(`https://tenki.netlify.app/.netlify/functions/weatherapi`, { location: location })
+            
             .then(results => {
               // overwrite weather object with new data
               this.weather = results.data;
               return 'hide'
             })
+
             .then(result => {
               this.loader = result;
               this.error = result;
             })
+
             .catch(error => {
               // error
               console.log('ERROR:', error);
