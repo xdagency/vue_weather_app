@@ -2,7 +2,7 @@
 
   <!-- MASTER -->
 
-  <article :class="'main ' + weather.weather[0].main">
+  <article :class="'main ' + weather.weather[0].main + '--' + time">
 
     <h1 class="brand">{{ copy_en.TITLE_MAIN }} <br> <span class="light">{{ copy_jp.TITLE_MAIN }}</span></h1>
 
@@ -13,7 +13,7 @@
     <Error v-bind:class="error" v-bind:copy_en="copy_en" v-bind:copy_jp="copy_jp" />
 
     <!-- SEARCH -->
-    <Search v-bind:copy_en="copy_en" v-bind:copy_jp="copy_jp" v-bind:location="location" @new-location="getLocation" />
+    <Search v-bind:copy_en="copy_en" v-bind:copy_jp="copy_jp" v-bind:location="location" v-bind:country_code="weather.sys.country" @new-location="getLocation" />
 
     <article class="content">
 
@@ -61,7 +61,10 @@
               id: 0,
               main: 'Weather'
             }
-          ]
+          ],
+          sys: {
+            country: 'JP'
+          }
         },
         location: 'tokyo',
         time: ''
@@ -88,6 +91,14 @@
             .then(results => {
               // overwrite weather object with new data
               this.weather = results.data;
+              // set day or night
+              let iconName = results.data.weather[0].icon.split("");
+              if (iconName[iconName.length - 1] === "d") {
+                this.time = "day";
+              } else {
+                this.time = "night";
+              }
+
               return 'hide'
             })
 
@@ -101,6 +112,7 @@
               console.log('ERROR:', error);
               this.loader = 'hide';
               this.error = 'show';
+              this.weather.sys.country = "AQ";
               this.weather.weather[0].main = "Thunderstorm";
             });
       }
@@ -128,6 +140,15 @@
           this.copy_en = results[0].data.EN;
           this.copy_jp = results[0].data.JP;
           this.weather = results[1].data;
+
+          // set day or night
+          let iconName = results[1].data.weather[0].icon.split("");
+          if (iconName[iconName.length - 1] === "d") {
+            this.time = "day";
+          } else {
+            this.time = "night";
+          }
+
 
           return 'hide'
 
@@ -219,18 +240,27 @@
       padding: 0 196px 40px;
     }
     @media screen and (min-width: 1600px) {
-      padding: 0 248px 40px;
+      padding: 0 296px 40px;
     }
   }
 
-  .Thunderstorm, .Rain, .Tornado, .Squall { background-color: #122C34; }
-  .Drizzle, .Mist, .Clouds { background-color: #94A8B3; }
-  .Haze, .Fog, .Snow { background-color: #CFD2CD; }
-  .Sand, .Ash { background-color: #646881; }
-  .Clear { background-color: #8CD9E3; }
+  .Thunderstorm--night, .Rain--night, .Tornado-night, .Squall--night { background-color: #122C34; }
+  .Thunderstorm--day, .Rain--day, .Tornado-day, .Squall--day { background-color: #245A6A; }
+  
+  .Drizzle--night, .Mist--night, .Clouds--night { background-color: #66818F; }
+  .Drizzle--day, .Mist--day, .Clouds--day { background-color: #94A8B3; }
+
+  .Haze--night, .Fog--night, .Snow--night { background-color: #989E94; }
+  .Haze--day, .Fog--day, .Snow--day { background-color: #CFD2CD; }
+
+  .Sand--night, .Ash--night { background-color: #3E4151; }
+  .Sand--day, .Ash--day { background-color: #646881; }
+
+  .Clear--night { background-color: #1C6973; }
+  .Clear--day { background-color: #8CD9E3; }
 
 
-  .Thunderstorm, .Rain, .Tornado, .Sand, .Ash {
+  .Thunderstorm--night, .Thunderstorm--day, .Rain--night, .Rain--day, .Tornado--night, .Tornado--day, .Sand--night, .Sand--day, .Squall--night, .Squall--day, .Ash--night, .Ash--day, .Clear--night {
     color: #F0F0F0;
     input.search { 
       color: #F0F0F0; 
@@ -250,7 +280,7 @@
     }
   }
 
-  .Drizzle, .Mist, .Clouds, .Squall, .Haze, .Fog, .Snow, .Clear {
+  .Drizzle--day, .Drizzle--night, .Mist--day, .Mist--night, .Clouds--day, .Clouds--night, .Haze--day, .Haze--night, .Fog--day, .Fog--night, .Snow--day, .Snow--night, .Clear--day {
     color: #101010;
     input.search { 
       color: #101010; 

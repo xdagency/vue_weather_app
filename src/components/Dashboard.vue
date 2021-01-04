@@ -14,6 +14,8 @@
 
       <p>{{ copy_en.LABEL_TEMP_MIN }} <span class="light">{{ copy_jp.LABEL_TEMP_MIN }}</span> {{ parseInt(weather.main.temp_min) }}&#176;</p>
 
+      <p>{{ copy_en.LABEL_HUMIDITY }} <span class="light">{{ copy_jp.LABEL_HUMIDITY }}</span> {{ parseInt(weather.main.humidity) }}%</p>
+
     </article>
 
 </template>
