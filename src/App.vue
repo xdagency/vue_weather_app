@@ -15,6 +15,9 @@
     <!-- SEARCH -->
     <Search v-bind:copy_en="copy_en" v-bind:copy_jp="copy_jp" v-bind:location="location" v-bind:country_code="weather.sys.country" @new-location="getLocation" />
 
+    <!-- MAP IMAGE -->
+    <Map v-bind:location="location" v-bind:lon="weather.coord.lon" v-bind:lat="weather.coord.lat" />
+
     <article class="content">
 
       <!-- DASHBOARD -->
@@ -32,6 +35,7 @@
   import Loader from './components/Loader.vue'
   import Dashboard from './components/Dashboard.vue'
   import Search from './components/Search.vue'
+  import Map from './components/Map.vue'
   import Error from './components/Error.vue'
 
   export default {
@@ -44,6 +48,10 @@
         copy_en: {},
         copy_jp: {},
         weather: {
+          coord: {
+            lon: -74.01,
+            lat: 40.71
+          },
           clouds: {
             all: 0
           },
@@ -66,7 +74,7 @@
             country: 'JP'
           }
         },
-        location: 'tokyo',
+        location: 'new york',
         time: ''
       }
     },
@@ -75,6 +83,7 @@
       Loader,
       Dashboard,
       Search,
+      Map,
       Error
     },
 
@@ -179,6 +188,12 @@
 
 <style lang="scss">
 
+  $color__storm: #122C34;
+  $color__snow: #CFD2CD;
+  $color__sunshine: #8CD9E3;
+  $color__cloudy: #94A8B3;
+  $color__ash: #646881;
+
   #app {
     font-family: 'Noto Sans SC', Helvetica, Arial, sans-serif;
     -webkit-font-smoothing: antialiased;
@@ -244,20 +259,80 @@
     }
   }
 
-  .Thunderstorm--night, .Rain--night, .Tornado-night, .Squall--night { background-color: #122C34; }
-  .Thunderstorm--day, .Rain--day, .Tornado-day, .Squall--day { background-color: #245A6A; }
+  .Thunderstorm--night, .Rain--night, .Tornado-night, .Squall--night { 
+    background-color: $color__storm; 
+    .map__overlay {
+      background: linear-gradient(to bottom, $color__storm, rgba(0,0,0,0) 75%), 
+                  linear-gradient(to right, $color__storm, rgba(0,0,0,0) 75%);
+    }
+  }
+  .Thunderstorm--day, .Rain--day, .Tornado-day, .Squall--day { 
+    background-color: lighten($color__storm, 15%); 
+    .map__overlay {
+      background: linear-gradient(to bottom, lighten($color__storm, 15%), rgba(0,0,0,0) 75%), 
+                  linear-gradient(to right, lighten($color__storm, 15%), rgba(0,0,0,0) 75%);
+    }
+  }
   
-  .Drizzle--night, .Mist--night, .Clouds--night { background-color: #66818F; }
-  .Drizzle--day, .Mist--day, .Clouds--day { background-color: #94A8B3; }
+  .Drizzle--night, .Mist--night, .Clouds--night { 
+    background-color: darken($color__cloudy, 15%); 
+    .map__overlay {
+      background: linear-gradient(to bottom, darken($color__cloudy, 15%), rgba(0,0,0,0) 75%), 
+                  linear-gradient(to right, darken($color__cloudy, 15%), rgba(0,0,0,0) 75%);
+    }
+  }
+  .Drizzle--day, .Mist--day, .Clouds--day { 
+    background-color: $color__cloudy; 
+    .map__overlay {
+      background: linear-gradient(to bottom, $color__cloudy, rgba(0,0,0,0) 75%), 
+                  linear-gradient(to right, $color__cloudy, rgba(0,0,0,0) 75%);
+    }
+  }
 
-  .Haze--night, .Fog--night, .Snow--night { background-color: #989E94; }
-  .Haze--day, .Fog--day, .Snow--day { background-color: #CFD2CD; }
+  .Haze--night, .Fog--night, .Snow--night { 
+    background-color: darken($color__snow, 20%); 
+    .map__overlay {
+      background: linear-gradient(to bottom, darken($color__snow, 20%), rgba(0,0,0,0) 75%), 
+                  linear-gradient(to right, darken($color__snow, 20%), rgba(0,0,0,0) 75%);
+    }
+  }
+  .Haze--day, .Fog--day, .Snow--day { 
+    background-color: $color__snow;
+    .map__overlay {
+      background: linear-gradient(to bottom, $color__snow, rgba(0,0,0,0) 75%), 
+                  linear-gradient(to right, $color__snow, rgba(0,0,0,0) 75%);
+    }
+  }
 
-  .Sand--night, .Ash--night { background-color: #3E4151; }
-  .Sand--day, .Ash--day { background-color: #646881; }
+  .Sand--night, .Ash--night { 
+    background-color: darken($color__ash, 15%); 
+    .map__overlay {
+      background: linear-gradient(to bottom, darken($color__ash, 15%), rgba(0,0,0,0) 75%), 
+                  linear-gradient(to right, darken($color__ash, 15%), rgba(0,0,0,0) 75%);
+    }
+  }
+  .Sand--day, .Ash--day { 
+    background-color: $color__ash; 
+    .map__overlay {
+      background: linear-gradient(to bottom, $color__ash, rgba(0,0,0,0) 75%), 
+                  linear-gradient(to right, $color__ash, rgba(0,0,0,0) 75%);
+    }
+  }
 
-  .Clear--night { background-color: #1C6973; }
-  .Clear--day { background-color: #8CD9E3; }
+  .Clear--night { 
+    background-color: darken($color__sunshine, 44%); 
+    .map__overlay {
+      background: linear-gradient(to bottom, darken($color__sunshine, 44%), rgba(0,0,0,0) 75%), 
+                  linear-gradient(to right, darken($color__sunshine, 44%), rgba(0,0,0,0) 75%);
+    }
+  }
+  .Clear--day { 
+    background-color: $color__sunshine; 
+    .map__overlay {
+      background: linear-gradient(to bottom, $color__sunshine, rgba(0,0,0,0) 75%), 
+                  linear-gradient(to right, $color__sunshine, rgba(0,0,0,0) 75%);
+    }
+  }
 
 
   .Thunderstorm--night, .Thunderstorm--day, .Rain--night, .Rain--day, .Tornado--night, .Tornado--day, .Sand--night, .Sand--day, .Squall--night, .Squall--day, .Ash--night, .Ash--day, .Clear--night {

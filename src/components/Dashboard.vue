@@ -30,6 +30,8 @@ export default {
 <style lang="scss" scoped>
   
   header.desc {
+    position: relative;
+    z-index: 10;
     display: flex;
     align-items: center;
     flex-wrap: wrap;
@@ -48,6 +50,8 @@ export default {
   }
 
   .data {
+    position: relative;
+    z-index: 10;
     padding: 40px 0 0;
     margin: 40px 0 0;
   }
