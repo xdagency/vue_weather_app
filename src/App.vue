@@ -16,7 +16,7 @@
     <Search v-bind:copy_en="copy_en" v-bind:copy_jp="copy_jp" v-bind:location="location" v-bind:country_code="weather.sys.country" @new-location="getLocation" />
 
     <!-- MAP IMAGE -->
-    <Map v-bind:location="location" v-bind:lon="weather.coord.lon" v-bind:lat="weather.coord.lat" />
+    <Map v-bind:location="location" v-bind:lon="weather.coord.lon" v-bind:lat="weather.coord.lat" v-bind:time="time" />
 
     <article class="content">
 
@@ -75,6 +75,7 @@
           }
         },
         location: 'new york',
+        map: '',
         time: ''
       }
     },
@@ -101,14 +102,26 @@
               // overwrite weather object with new data
               this.weather = results.data;
               // set day or night
+              let mapTheme = "";
               let iconName = results.data.weather[0].icon.split("");
               if (iconName[iconName.length - 1] === "d") {
                 this.time = "day";
+                mapTheme = "ckjnoh0jp31lx19t84xqj116n";
               } else {
                 this.time = "night";
+                mapTheme = "ckjnofb9q315s19mx5b83p61z";
               }
 
-              return 'hide'
+              return axios.get(`https://api.mapbox.com/styles/v1/xenodesign/${mapTheme}/static/${this.weather.coord.lon},${this.weather.coord.lat},10/720x560?access_token=pk.eyJ1IjoieGVub2Rlc2lnbiIsImEiOiJja2pqYXF5bGo1Mm15MnNwa3ZvNXZicWo2In0.c2MJSlLShcMEon71nvPzug`);
+
+            })
+
+            .then(result => {
+
+              console.log('MAPBOX: ', result.status);
+
+              return 'hide';
+
             })
 
             .then(result => {
@@ -118,7 +131,7 @@
 
             .catch(error => {
               // error
-              console.log('ERROR:', error);
+              console.log('ERROR B:', error);
               this.loader = 'hide';
               this.error = 'show';
               this.weather.sys.country = "AQ";
@@ -151,15 +164,25 @@
           this.weather = results[1].data;
 
           // set day or night
+          let mapTheme = "";
           let iconName = results[1].data.weather[0].icon.split("");
           if (iconName[iconName.length - 1] === "d") {
             this.time = "day";
+            mapTheme = "ckjnoh0jp31lx19t84xqj116n";
           } else {
             this.time = "night";
+            mapTheme = "ckjnofb9q315s19mx5b83p61z";
           }
 
+          return axios.get(`https://api.mapbox.com/styles/v1/xenodesign/${mapTheme}/static/${this.weather.coord.lon},${this.weather.coord.lat},10/720x560?access_token=pk.eyJ1IjoieGVub2Rlc2lnbiIsImEiOiJja2pqYXF5bGo1Mm15MnNwa3ZvNXZicWo2In0.c2MJSlLShcMEon71nvPzug`);
 
-          return 'hide'
+        })
+
+        .then(result => {
+
+          console.log('MAPBOX: ', result.status);
+
+          return 'hide';
 
         })
 
@@ -174,7 +197,7 @@
         .catch(error => {
 
           // error
-          console.log('ERROR 1:', error);
+          console.log('ERROR A:', error);
           this.loader = 'hide';
           this.error = 'show';
           this.weather.weather[0].main = "Thunderstorm";
