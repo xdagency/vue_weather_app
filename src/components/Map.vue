@@ -15,7 +15,13 @@
 <script>
 export default {
     name: 'Map',
-    props: ['location', 'lon', 'lat', 'time']
+    props: ['location', 'lon', 'lat', 'time'],
+    data() {
+        return {
+            dark: 'ckjnofb9q315s19mx5b83p61z',
+            light: 'ckjnoh0jp31lx19t84xqj116n'
+        }
+    }
 }
 </script>
 
