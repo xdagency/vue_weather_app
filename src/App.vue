@@ -13,7 +13,7 @@
     <Error v-bind:class="error" v-bind:copy_en="copy_en" v-bind:copy_jp="copy_jp" />
 
     <!-- SEARCH -->
-    <Search v-bind:copy_en="copy_en" v-bind:copy_jp="copy_jp" v-bind:location="location" v-bind:country_code="weather.sys.country" @new-location="getLocation" />
+    <Search v-bind:copy_en="copy_en" v-bind:copy_jp="copy_jp" v-bind:location="location" v-bind:country_code="weather.sys.country" @new-location="getLocation" @multi-locations="multiLocation" />
 
     <!-- MAP IMAGE -->
     <Map v-bind:location="location" v-bind:lon="weather.coord.lon" v-bind:lat="weather.coord.lat" v-bind:time="time" />
@@ -21,7 +21,7 @@
     <article class="content">
 
       <!-- DASHBOARD -->
-      <Dashboard v-bind:copy_en="copy_en" v-bind:copy_jp="copy_jp" v-bind:weather="weather" />
+      <Dashboard v-bind:copy_en="copy_en" v-bind:copy_jp="copy_jp" v-bind:weather="weather" v-bind:multiLocation="multiLocation" />
 
     </article>
 
@@ -75,7 +75,7 @@
           }
         },
         location: 'new york',
-        map: '',
+        matchedLocations: [],
         time: ''
       }
     },
@@ -89,9 +89,17 @@
     },
 
     methods: {
+
+      multiLocation(arr) {
+
+        this.matchedLocations = arr;
+
+      },
+
       getLocation(location) {
 
         this.loader = 'show';
+        this.location = location;
 
         axios.post(`${process.env.VUE_APP_WEATHER_LAMBDA_URL}`, {
             location: location,
@@ -211,11 +219,36 @@
 
 <style lang="scss">
 
-  $color__storm: #122C34;
-  $color__snow: #CFD2CD;
-  $color__sunshine: #8CD9E3;
-  $color__cloudy: #94A8B3;
-  $color__ash: #646881;
+  :root {
+    --color__black: #212221;
+    --color__white: #fefcfe;
+    --color__error: #772C3B;
+    --color__success: green;
+    --color__warn: #251627;
+
+    --color__storm: #122C34;
+    --color__storm--light: #1F4D5B;
+    --color__snow: #CFD2CD;
+    --color__snow--dark: #C0C5BF;
+    --color__sunshine: #8CD9E3;
+    --color__sunshine--dark: #207883;
+    --color__cloudy: #94A8B3;
+    --color__cloudy--dark: #556C77;
+    --color__ash: #757995;
+
+    --zBottom: 1;
+    --zContent: 5;
+    --zBelowSearch: 10;
+    --zSearch: 15;
+    --zAboveSearch: 20;
+    --zAboveAll: 99;
+
+    --base: 8px;
+  }
+
+  //////////////////////////////
+  // MAIN STRUCTURE
+  //////////////////////////////
 
   #app {
     font-family: 'Noto Sans SC', Helvetica, Arial, sans-serif;
@@ -223,6 +256,66 @@
     -moz-osx-font-smoothing: grayscale;
     text-align: left;
   }
+
+  // show or hide
+  .show { display: block; }
+  .hide { display: none; }
+
+  article.main {
+    height: 100%;
+    height: 100vh;
+    padding: 0;
+    position: relative;
+  }
+
+  article.content {
+    position: relative;
+    padding: 0 24px 40px;
+    // max-width: 1280px;
+    margin: 0 auto;
+
+    @media screen and (min-width: 720px) {
+      padding: 0 96px 40px;
+    }
+    @media screen and (min-width: 1280px) {
+      padding: 0 196px 40px;
+    }
+    @media screen and (min-width: 1600px) {
+      padding: 0 296px 40px;
+    }
+  }
+
+  article.modal {
+      position: absolute;
+      z-index: var(--zAboveSearch);
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 82%;
+      max-width: 480px;
+      
+      background-color: var(--color__white);
+      color: var(--color__black);
+      padding: 0 calc(var(--base) * 3) calc(var(--base) * 3);
+      border-radius: 6px;
+
+      header.modal__header {
+        position: sticky;
+        margin: 0;
+        padding: calc(var(--base) * 2) 0;
+        top: 0;
+        left: 0;
+        right: 0;
+        width: 100%;
+        background-color: var(--color__white);
+        border-bottom: 1px solid rgba(0,0,0,0.15);
+      }
+  }
+
+
+  //////////////////////////////
+  // TYPOGRAPHY
+  //////////////////////////////
 
   body, h1, h2, h3, h4, h5, p {
     padding: 0;
@@ -250,128 +343,111 @@
     position: fixed;
     right: 40px;
     top: 40px;
-    z-index: 10;
+    z-index: var(--zContent);
     font-size: 16px;
     text-align: right;
   }
 
   p + p {
-    padding-top: 8px;
+    padding-top: calc(var(--base) * 1);
   }
 
-  article.main {
-    height: 100%;
-    height: 100vh;
-    padding: 0;
-    position: relative;
-  }
+  
 
-  article.content {
-    padding: 0 24px 40px;
-    // max-width: 1280px;
-    margin: 0 auto;
-
-    @media screen and (min-width: 720px) {
-      padding: 0 96px 40px;
-    }
-    @media screen and (min-width: 1280px) {
-      padding: 0 196px 40px;
-    }
-    @media screen and (min-width: 1600px) {
-      padding: 0 296px 40px;
-    }
-  }
+  //////////////////////////////
+  // THEMEING
+  //////////////////////////////
 
   .Thunderstorm--night, .Rain--night, .Tornado-night, .Squall--night { 
-    background-color: $color__storm; 
+    background-color: var(--color__storm); 
     .map__overlay {
-      background: linear-gradient(to bottom, $color__storm, rgba(0,0,0,0) 75%), 
-                  linear-gradient(to right, $color__storm, rgba(0,0,0,0) 75%);
+      background: linear-gradient(to bottom, var(--color__storm), rgba(0,0,0,0) 75%), 
+                  linear-gradient(to right, var(--color__storm), rgba(0,0,0,0) 75%);
     }
   }
   .Thunderstorm--day, .Rain--day, .Tornado-day, .Squall--day { 
-    background-color: lighten($color__storm, 15%); 
+    background-color: var(--color__storm--light); 
     .map__overlay {
-      background: linear-gradient(to bottom, lighten($color__storm, 15%), rgba(0,0,0,0) 75%), 
-                  linear-gradient(to right, lighten($color__storm, 15%), rgba(0,0,0,0) 75%);
+      background: linear-gradient(to bottom, var(--color__storm--light), rgba(0,0,0,0) 75%), 
+                  linear-gradient(to right, var(--color__storm--light), rgba(0,0,0,0) 75%);
     }
   }
   
   .Drizzle--night, .Mist--night, .Clouds--night { 
-    background-color: darken($color__cloudy, 15%); 
+    background-color: var(--color__cloudy--dark); 
     .map__overlay {
-      background: linear-gradient(to bottom, darken($color__cloudy, 15%), rgba(0,0,0,0) 75%), 
-                  linear-gradient(to right, darken($color__cloudy, 15%), rgba(0,0,0,0) 75%);
+      background: linear-gradient(to bottom, var(--color__cloudy--dark), rgba(0,0,0,0) 75%), 
+                  linear-gradient(to right, var(--color__cloudy--dark), rgba(0,0,0,0) 75%);
     }
   }
   .Drizzle--day, .Mist--day, .Clouds--day { 
-    background-color: $color__cloudy; 
+    background-color: var(--color__cloudy); 
     .map__overlay {
-      background: linear-gradient(to bottom, $color__cloudy, rgba(0,0,0,0) 75%), 
-                  linear-gradient(to right, $color__cloudy, rgba(0,0,0,0) 75%);
+      background: linear-gradient(to bottom, var(--color__cloudy), rgba(0,0,0,0) 75%), 
+                  linear-gradient(to right, var(--color__cloudy), rgba(0,0,0,0) 75%);
     }
   }
 
   .Haze--night, .Fog--night, .Snow--night { 
-    background-color: darken($color__snow, 20%); 
+    background-color: var(--color__snow--dark); 
     .map__overlay {
-      background: linear-gradient(to bottom, darken($color__snow, 20%), rgba(0,0,0,0) 75%), 
-                  linear-gradient(to right, darken($color__snow, 20%), rgba(0,0,0,0) 75%);
+      background: linear-gradient(to bottom, var(--color__snow--dark), rgba(0,0,0,0) 75%), 
+                  linear-gradient(to right, var(--color__snow--dark), rgba(0,0,0,0) 75%);
     }
   }
   .Haze--day, .Fog--day, .Snow--day { 
-    background-color: $color__snow;
+    background-color: var(--color__snow);
     .map__overlay {
-      background: linear-gradient(to bottom, $color__snow, rgba(0,0,0,0) 75%), 
-                  linear-gradient(to right, $color__snow, rgba(0,0,0,0) 75%);
+      background: linear-gradient(to bottom, var(--color__snow), rgba(0,0,0,0) 75%), 
+                  linear-gradient(to right, var(--color__snow), rgba(0,0,0,0) 75%);
     }
   }
 
   .Sand--night, .Ash--night { 
-    background-color: darken($color__ash, 15%); 
+    background-color: var(--color__ash); 
     .map__overlay {
-      background: linear-gradient(to bottom, darken($color__ash, 15%), rgba(0,0,0,0) 75%), 
-                  linear-gradient(to right, darken($color__ash, 15%), rgba(0,0,0,0) 75%);
+      background: linear-gradient(to bottom, var(--color__ash), rgba(0,0,0,0) 75%), 
+                  linear-gradient(to right, var(--color__ash), rgba(0,0,0,0) 75%);
     }
   }
   .Sand--day, .Ash--day { 
-    background-color: $color__ash; 
+    background-color: var(--color__ash); 
     .map__overlay {
-      background: linear-gradient(to bottom, $color__ash, rgba(0,0,0,0) 75%), 
-                  linear-gradient(to right, $color__ash, rgba(0,0,0,0) 75%);
+      background: linear-gradient(to bottom, var(--color__ash), rgba(0,0,0,0) 75%), 
+                  linear-gradient(to right, var(--color__ash), rgba(0,0,0,0) 75%);
     }
   }
 
   .Clear--night { 
-    background-color: darken($color__sunshine, 44%); 
+    background-color: var(--color__sunshine--dark); 
     .map__overlay {
-      background: linear-gradient(to bottom, darken($color__sunshine, 44%), rgba(0,0,0,0) 75%), 
-                  linear-gradient(to right, darken($color__sunshine, 44%), rgba(0,0,0,0) 75%);
+      background: linear-gradient(to bottom, var(--color__sunshine--dark), rgba(0,0,0,0) 75%), 
+                  linear-gradient(to right, var(--color__sunshine--dark), rgba(0,0,0,0) 75%);
     }
   }
   .Clear--day { 
-    background-color: $color__sunshine; 
+    background-color: var(--color__sunshine); 
     .map__overlay {
-      background: linear-gradient(to bottom, $color__sunshine, rgba(0,0,0,0) 75%), 
-                  linear-gradient(to right, $color__sunshine, rgba(0,0,0,0) 75%);
+      background: linear-gradient(to bottom, var(--color__sunshine), rgba(0,0,0,0) 75%), 
+                  linear-gradient(to right, var(--color__sunshine), rgba(0,0,0,0) 75%);
     }
   }
 
 
   .Thunderstorm--night, .Thunderstorm--day, .Rain--night, .Rain--day, .Tornado--night, .Tornado--day, .Sand--night, .Sand--day, .Squall--night, .Squall--day, .Ash--night, .Ash--day, .Clear--night {
-    color: #F0F0F0;
+    color: var(--color__white);
     input.search { 
-      color: #F0F0F0; 
+      color: var(--color__white); 
     }
     ::placeholder {
-      color: #F0F0F0;
+      color: var(--color__white);
       opacity: 1;
     }
     :-ms-input-placeholder { /* Internet Explorer 10-11 */
-      color: #F0F0F0;
+      color: var(--color__white);
     }
     ::-ms-input-placeholder { /* Microsoft Edge */
-      color: #F0F0F0;
+      color: var(--color__white);
     }
     .data {
       border-top: 1px solid rgba(255,255,255,0.25);
@@ -379,24 +455,25 @@
   }
 
   .Drizzle--day, .Drizzle--night, .Mist--day, .Mist--night, .Clouds--day, .Clouds--night, .Haze--day, .Haze--night, .Fog--day, .Fog--night, .Snow--day, .Snow--night, .Clear--day {
-    color: #101010;
+    color: var(--color__black);
     input.search { 
-      color: #101010; 
+      color: var(--color__black); 
     }
     ::placeholder {
-      color: #101010;
+      color: var(--color__black);
       opacity: 1;
     }
     :-ms-input-placeholder { /* Internet Explorer 10-11 */
-      color: #101010;
+      color: var(--color__black);
     }
     ::-ms-input-placeholder { /* Microsoft Edge */
-      color: #101010;
+      color: var(--color__black);
     }
     .data {
       border-top: 1px solid rgba(0,0,0,0.25);
     }
   }
+
 
   /*
   Thunderstorm

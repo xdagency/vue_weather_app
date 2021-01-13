@@ -27,10 +27,14 @@ export default {
 
 <style scoped lang="scss">
 
-    $color: #94A8B3;
+
+    ///////////////////////////////
+    // MAP STYLES
+    ///////////////////////////////
 
     .map__container {
         position: fixed;
+        z-index: var(--zBottom);
         bottom: 0;
         right: 0;
 
@@ -40,8 +44,7 @@ export default {
             left: 0;
             width: 100%;
             height: 100%;
-            z-index: 5;
-            // border: 1px solid red;
+            z-index: var(--zContent);
         }
 
         figure {

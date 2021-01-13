@@ -1,5 +1,6 @@
 <template>
 
+    <!-- SEARCH FORM -->
     <form @submit.prevent="onSubmit">
 
       <figure class="flag">
@@ -13,14 +14,35 @@
 </template>
 
 <script>
+// import CityList from '../assets/city.list.json'
+
 export default {
   name: 'Search',
   props: ['location', 'copy_en', 'copy_jp', 'country_code'],
   methods: {
+
     onSubmit() {
-      // console.log(this.searchLocation);
-      this.$emit('new-location', this.searchLocation);
+
+      // Search through the local json list of cities from openweatherapi
+      // and build an array of matches to the search criteria
+      let cities = CityList;
+      let matchedLocations = cities.filter(elem => {
+        if (elem.name.toUpperCase() === this.searchLocation.toUpperCase()) {
+          return elem;
+        }
+      });
+
+      // if there are more than 1 match show the modal to select which city
+      // otherwise invoke the regular getLocation fn
+      this.$emit('multi-locations', matchedLocations);
+      this.getLocation(this.searchLocation);
+
+    },
+
+    getLocation(location) {
+      this.$emit('new-location', location);
     }
+
   },
   data() {
     return {
@@ -32,9 +54,14 @@ export default {
 
 <style lang="scss" scoped>
 
+
+//////////////////////////////
+// SEARCH STYLES
+//////////////////////////////
+
 form {
   position: relative;
-  z-index: 11;
+  z-index: 15;
   padding: 104px 0 0;
 }
 
@@ -57,12 +84,6 @@ input.search {
   }
 
   &::-webkit-search-cancel-button {
-    // position:relative;
-    // -webkit-appearance: none;
-    // background: red;
-    // height: 20px;
-    // width: 20px;
-    // border-radius:10px;
   }
 
   @media screen and (min-width: 720px) {

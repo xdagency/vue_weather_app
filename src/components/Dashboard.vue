@@ -28,13 +28,21 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+
+  @import '../assets/settings.scss';
+
+
+  //////////////////////////////
+  // DASHBOARD STYLES
+  //////////////////////////////
   
   header.desc {
     position: relative;
-    z-index: 10;
+    z-index: $zContent;
     display: flex;
     align-items: center;
     flex-wrap: wrap;
+    
     :nth-child(1) {
       width: 100%;
     }
@@ -51,7 +59,7 @@ export default {
 
   .data {
     position: relative;
-    z-index: 10;
+    z-index: $zContent;
     padding: 40px 0 0;
     margin: 40px 0 0;
   }

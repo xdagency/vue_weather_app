@@ -1,0 +1,57 @@
+//////////////////////////////
+// VARIABLES
+//////////////////////////////
+
+$color__black: #212221;
+$color__white: #fefcfe;
+$color__error: #772C3B;
+$color__success: green;
+$color__warn: #251627;
+
+$color__storm: #122C34;
+$color__snow: #CFD2CD;
+$color__sunshine: #8CD9E3;
+$color__cloudy: #94A8B3;
+$color__ash: #646881;
+
+$zBottom: 1;
+$zContent: 5;
+$zBelowSearch: 10;
+$zSearch: 15;
+$zAboveSearch: 20;
+$zAboveAll: 99;
+
+@function size($multiplier: 1) {
+    $base: 8px;
+    @return $base * $multiplier;
+}
+
+$breakpoints: (
+    break-sm: size(60), // 480px
+    break-md: size(90), // 720px
+    break-lg: size(160), // 1280px
+    break-xl: size(200) // 1600px
+);
+
+@mixin bp($breakpoint) {
+    @if map-has-key($breakpoints, $breakpoint) {
+        @media screen and (min-width: #{map-get($breakpoints, $breakpoint)}) {
+            @content;    
+        }
+    }
+    @else {
+        @warn "Unfortunately, no value could be retrieved from breakpoint map.";
+    }
+}
+
+@mixin fullScreen {
+    position: fixed;
+    width: 100%;
+    width: 100vw;
+    height: 100%;
+    height: 100vh;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+}

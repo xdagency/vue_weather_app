@@ -23,39 +23,41 @@ export default {
 
 <style lang="scss" scoped>
 
+
+    ///////////////////////////////
+    // ERROR STYLES
+    ///////////////////////////////
+
     article.error {
-        background: #772C3B;
+        position: fixed;
         width: 100%;
         width: 100vw;
         height: 100%;
         height: 100vh;
-        position: fixed;
         top: 0;
-        left: 0;
         right: 0;
         bottom: 0;
-        z-index: 11;
-        color: white;
-    }
-
-    .error_content {
-        position: fixed;
-        bottom: 40px;
         left: 0;
-        padding: 0 24px;
+        background: var(--color__error);
+        z-index: var(--zBelowSearch);
+        color: var(--color__white);
 
-        @media screen and (min-width: 720px) {
-        padding: 0 96px;
-        }
-        @media screen and (min-width: 1280px) {
-        padding: 0 196px;
-        }
-        @media screen and (min-width: 1600px) {
-            padding: 0 248px;
+        .error_content {
+            position: fixed;
+            bottom: calc(var(--base) * 6);
+            left: 0;
+            padding: 0 calc(var(--base) * 3);
+
+            @media screen and (min-width: 720px) {
+                padding: 0 96px;
+            }
+            @media screen and (min-width: 1280px) {
+                padding: 0 196px;
+            }
+            @media screen and (min-width: 1600px) {
+                padding: 0 248px;
+            }
         }
     }
-
-    .show { display: block; }
-    .hide { display: none; }
 
 </style>
