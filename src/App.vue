@@ -20,8 +20,10 @@
 
     <article class="content">
 
+      <CityPicker v-bind:copy_en="copy_en" v-bind:copy_jp="copy_jp" v-bind:cityMatches="matchedLocations" v-bind:location="location" @new-location="getLocation" />
+
       <!-- DASHBOARD -->
-      <Dashboard v-bind:copy_en="copy_en" v-bind:copy_jp="copy_jp" v-bind:weather="weather" v-bind:multiLocation="multiLocation" />
+      <Dashboard v-bind:copy_en="copy_en" v-bind:copy_jp="copy_jp" v-bind:weather="weather" />
 
     </article>
 
@@ -36,6 +38,7 @@
   import Dashboard from './components/Dashboard.vue'
   import Search from './components/Search.vue'
   import Map from './components/Map.vue'
+  import CityPicker from './components/CityPicker.vue'
   import Error from './components/Error.vue'
 
   export default {
@@ -85,6 +88,7 @@
       Dashboard,
       Search,
       Map,
+      CityPicker,
       Error
     },
 
@@ -312,6 +316,15 @@
       }
   }
 
+  .btn {
+    padding: 4px 8px;
+    border: none;
+    background: none;
+    &:hover {
+      cursor: pointer;
+    }
+  }
+
 
   //////////////////////////////
   // TYPOGRAPHY
@@ -434,7 +447,7 @@
   }
 
 
-  .Thunderstorm--night, .Thunderstorm--day, .Rain--night, .Rain--day, .Tornado--night, .Tornado--day, .Sand--night, .Sand--day, .Squall--night, .Squall--day, .Ash--night, .Ash--day, .Clear--night {
+  .Thunderstorm--night, .Thunderstorm--day, .Rain--night, .Rain--day, .Tornado--night, .Tornado--day, .Sand--night, .Sand--day, .Squall--night, .Squall--day, .Ash--night, .Ash--day, .Clear--night, .Clouds--night {
     color: var(--color__white);
     input.search { 
       color: var(--color__white); 
@@ -452,9 +465,12 @@
     .data {
       border-top: 1px solid rgba(255,255,255,0.25);
     }
+    .btn__simple {
+      color: var(--color__white);
+    }
   }
 
-  .Drizzle--day, .Drizzle--night, .Mist--day, .Mist--night, .Clouds--day, .Clouds--night, .Haze--day, .Haze--night, .Fog--day, .Fog--night, .Snow--day, .Snow--night, .Clear--day {
+  .Drizzle--day, .Drizzle--night, .Mist--day, .Mist--night, .Clouds--day, .Haze--day, .Haze--night, .Fog--day, .Fog--night, .Snow--day, .Snow--night, .Clear--day {
     color: var(--color__black);
     input.search { 
       color: var(--color__black); 
@@ -471,6 +487,9 @@
     }
     .data {
       border-top: 1px solid rgba(0,0,0,0.25);
+    }
+    .btn__simple {
+      color: var(--color__black);
     }
   }
 

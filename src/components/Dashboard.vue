@@ -1,9 +1,13 @@
 <template>
 
     <header class="desc">
+      
       <h3>{{ copy_en.LABEL_TEMP }} <span class="light">{{ copy_jp.LABEL_TEMP }}</span> {{ parseInt(weather.main.temp) }}&#176;</h3>
+
       <img :src="'http://openweathermap.org/img/wn/' + weather.weather[0].icon + '@2x.png'" :alt="weather.weather[0].description" class="icon" title="Weather Icon" width="64"> 
+
       <h3>{{ weather.weather[0].description }}</h3>
+
     </header>
 
     <article class="data">
@@ -23,7 +27,7 @@
 <script>
 export default {
   name: 'Dashboard',
-  props: ['copy_en', 'copy_jp', 'weather']
+  props: ['copy_en', 'copy_jp', 'weather'],
 }
 </script>
 

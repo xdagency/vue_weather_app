@@ -7,14 +7,14 @@
         <img :src="'https://www.countryflags.io/' + country_code + '/flat/32.png'" :alt="'Country flag for ' + country_code" title="Flag icon">
       </figure>
 
-      <input type="search" name="search" v-model.lazy="searchLocation" class="search" id="search" :placeholder="copy_en.PLACEHOLDER_ENTER_CITY + ' ' + copy_jp.PLACEHOLDER_ENTER_CITY">
+      <input type="search" name="search" v-model.lazy="searchLocation" class="search" id="search" tabindex="1" :placeholder="copy_en.PLACEHOLDER_ENTER_CITY + ' ' + copy_jp.PLACEHOLDER_ENTER_CITY">
 
     </form>
 
 </template>
 
 <script>
-// import CityList from '../assets/city.list.json'
+import CityList from '../assets/city.list.json'
 
 export default {
   name: 'Search',
